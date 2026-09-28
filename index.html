@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Study Helper – Created by Ravi</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{--bg:#0a0f1f;--card:rgba(255,255,255,.06);--line:rgba(255,255,255,.12);--txt:#eef2ff;--mut:#98a2c3;--a1:#6366f1;--a2:#22d3ee;--ok:#34d399;--bad:#f87171}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden}
+.blobs{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.blobs i{position:absolute;border-radius:50%;filter:blur(70px);opacity:.45;animation:float 16s ease-in-out infinite alternate}
+.blobs i:nth-child(1){width:320px;height:320px;background:#6366f1;top:-80px;left:-80px}
+.blobs i:nth-child(2){width:280px;height:280px;background:#22d3ee;top:30%;right:-100px;animation-delay:-5s}
+.blobs i:nth-child(3){width:300px;height:300px;background:#a855f7;bottom:-100px;left:20%;animation-delay:-9s}
+@keyframes float{to{transform:translate(40px,60px) scale(1.15)}}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes pop{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes shine{to{background-position:250% 0}}
+@keyframes sweep{0%{left:-60%}60%,100%{left:130%}}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+@keyframes flame{50%{transform:scale(1.15) rotate(-4deg)}}
+@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:.9}}
+@keyframes s{to{transform:rotate(360deg)}}
+.wrap{position:relative;z-index:1;max-width:720px;margin:0 auto;padding:22px 16px 30px}
+.hero{text-align:center;padding:14px 0 10px;animation:rise .7s both}
+.badge{display:inline-block;font-size:12px;font-weight:600;padding:5px 12px;border-radius:99px;background:rgba(99,102,241,.18);color:#c7d2fe;border:1px solid rgba(99,102,241,.4)}
+h1{font-size:30px;line-height:1.15;margin:12px 0 8px;font-weight:800;letter-spacing:-.5px}
+h1 span{background:linear-gradient(90deg,var(--a1),var(--a2),#a855f7,var(--a1));background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 6s linear infinite}
+.sub{color:var(--mut);font-size:15px;margin:0}
+.tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;background:var(--card);border:1px solid var(--line);padding:5px;border-radius:14px;margin:18px 0;animation:rise .8s both}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:0 0 auto;border:0;background:transparent;color:var(--mut);padding:11px 14px;border-radius:10px;font:600 13px Inter,sans-serif;cursor:pointer;transition:.25s;white-space:nowrap}
+.tabs button.on{background:linear-gradient(135deg,var(--a1),#4f46e5);color:#fff;box-shadow:0 6px 20px rgba(99,102,241,.45);transform:translateY(-1px)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;backdrop-filter:blur(8px);animation:pop .45s both}
+label.l{display:block;font-size:13px;font-weight:600;color:var(--mut);margin:14px 0 6px}
+input,select,textarea{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--line);background:rgba(0,0,0,.28);color:var(--txt);font:500 16px Inter,sans-serif;outline:none;transition:.2s}
+textarea{resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--a1);box-shadow:0 0 0 3px rgba(99,102,241,.25)}
+select option{background:#111827}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.g3 .btn{font-size:13px;padding:12px 4px}
+.sr{display:grid;grid-template-columns:34px 1fr 108px;gap:8px;align-items:start;margin-bottom:10px}
+.sr .num{margin-top:7px}
+.sr .so{margin-top:6px}
+.num{width:34px;height:34px;border-radius:10px;background:rgba(99,102,241,.2);color:#c7d2fe;display:grid;place-items:center;font-weight:700;font-size:14px}
+.btn{position:relative;overflow:hidden;width:100%;margin-top:18px;padding:15px;border:0;border-radius:12px;color:#fff;font:700 16px Inter,sans-serif;cursor:pointer;background:linear-gradient(135deg,var(--a1),#4f46e5 60%,#0891b2);box-shadow:0 8px 24px rgba(79,70,229,.4);transition:.2s}
+.btn:not(.sec)::before{content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);transform:skewX(-20deg);animation:sweep 3.6s infinite}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.55}
+.btn.sec{background:rgba(255,255,255,.08);box-shadow:none;border:1px solid var(--line);margin-top:10px}
+.btn.ok{background:linear-gradient(135deg,#059669,#10b981);box-shadow:0 8px 24px rgba(16,185,129,.3)}
+.hide{display:none!important}
+.drop{display:block;border:2px dashed rgba(129,140,248,.55);border-radius:16px;padding:26px 14px;text-align:center;cursor:pointer;background:rgba(99,102,241,.06);transition:.2s}
+.drop:active{background:rgba(99,102,241,.15);transform:scale(.99)}
+.drop .ic{font-size:36px;display:inline-block;animation:flame 2.4s ease-in-out infinite}
+.drop b{display:block;margin-top:6px;font-size:16px}
+.drop small{color:var(--mut)}
+.limit{display:inline-block;margin-top:10px;font-size:12px;font-weight:700;padding:4px 10px;border-radius:99px;background:rgba(251,191,36,.15);color:#fcd34d;border:1px solid rgba(251,191,36,.4)}
+.limit.g{background:rgba(52,211,153,.15);color:#6ee7b7;border-color:rgba(52,211,153,.4)}
+.cnote{display:block;margin-top:8px}
+.file{display:flex;align-items:center;gap:10px;margin-top:12px;padding:10px 12px;border-radius:12px;background:rgba(0,0,0,.28);border:1px solid var(--line);font-size:14px;flex-wrap:wrap;animation:rise .3s both}
+.file.bad{border-color:var(--bad);color:#fecaca}
+.file .nm{flex:1;min-width:140px;overflow:hidden;text-overflow:ellipsis}
+.file button{background:none;border:0;color:var(--mut);font-size:18px;cursor:pointer}
+.file .go{font-size:13px;font-weight:700;color:#fff;background:#4f46e5;border-radius:8px;padding:7px 10px}
+.result{margin-top:18px;display:none;animation:rise .5s both}
+.loader{display:flex;align-items:center;gap:12px;padding:18px;border-radius:14px;background:var(--card);border:1px solid var(--line);color:var(--mut)}
+.spin{width:22px;height:22px;border-radius:50%;border:3px solid rgba(255,255,255,.15);border-top-color:var(--a2);animation:s .8s linear infinite;flex:none}
+.msg{padding:14px;border-radius:12px;background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.4);color:#fecaca;white-space:pre-wrap;line-height:1.5}
+.okbox{padding:14px;border-radius:12px;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.4);line-height:1.6}
+.okbox small{color:var(--mut);display:block;margin-top:8px}
+.rh{margin:0 0 4px;font-size:22px;font-weight:800}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.stat{background:rgba(0,0,0,.28);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
+.stat b{display:block;font-size:20px;color:var(--a2)}
+.stat span{font-size:11px;color:var(--mut)}
+.body h3{font-size:17px;margin:20px 0 6px;color:#c7d2fe;padding-left:10px;border-left:3px solid var(--a1)}
+.body h4{font-size:15px;margin:14px 0 4px;color:var(--a2)}
+.body p{margin:6px 0;line-height:1.65;color:#dbe1f7}
+.body ul{margin:6px 0;padding-left:20px}
+.body li{margin:4px 0;line-height:1.6;color:#dbe1f7}
+.card{background:rgba(0,0,0,.28);border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0;cursor:pointer;transition:.2s;break-inside:avoid;animation:rise .5s both;animation-delay:calc(var(--i,0)*45ms)}
+.card:active{transform:scale(.99)}
+.card .q{font-weight:600;line-height:1.5}
+.card .q i,.qcard .q i{font-style:normal;display:inline-block;min-width:26px;height:26px;line-height:26px;text-align:center;border-radius:8px;background:rgba(99,102,241,.25);color:#c7d2fe;font-size:12px;margin-right:8px}
+.card .a{display:none;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);color:#7dd3fc;line-height:1.6}
+.card.open .a{display:block;animation:rise .3s both}
+.card .tap{font-size:11px;color:var(--mut);margin-top:8px}
+.card.open .tap{display:none}
+.qbar{position:sticky;top:0;z-index:5;background:rgba(10,15,31,.92);backdrop-filter:blur(8px);padding:10px 0;margin-top:8px;font-size:13px;color:var(--mut)}
+.qtrack{height:8px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;margin-top:6px}
+.qfill{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--a1),var(--a2));transition:width .4s}
+.qcard{background:rgba(0,0,0,.28);border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0;break-inside:avoid;animation:rise .5s both;animation-delay:calc(var(--i,0)*50ms)}
+.qcard .q{font-weight:600;line-height:1.5;margin-bottom:10px}
+.opt{padding:12px;border-radius:10px;border:1px solid var(--line);margin:7px 0;cursor:pointer;line-height:1.45;transition:.2s;background:rgba(255,255,255,.03)}
+.opt:active{transform:scale(.99)}
+.qcard[data-done] .opt{cursor:default}
+.opt.correct{background:rgba(52,211,153,.18);border-color:var(--ok);animation:pop .3s}
+.opt.wrong{background:rgba(248,113,113,.18);border-color:var(--bad);animation:shake .35s}
+.why{display:none;margin-top:8px;padding:10px;border-radius:10px;background:rgba(34,211,238,.08);color:#a5f3fc;line-height:1.55;font-size:14px}
+.qres{text-align:center;padding:18px;border-radius:16px;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.4);margin-top:16px;animation:pop .5s both}
+.qres .big{font-size:44px;font-weight:800;background:linear-gradient(90deg,var(--a1),var(--a2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:10px}
+.chip{padding:6px 12px;border-radius:99px;font-size:13px;font-weight:600;background:rgba(248,113,113,.15);border:1px solid rgba(248,113,113,.4);color:#fecaca}
+.streak{text-align:center;padding:18px;border-radius:16px;background:linear-gradient(135deg,rgba(249,115,22,.18),rgba(239,68,68,.12));border:1px solid rgba(249,115,22,.4)}
+.streak .fire{font-size:40px;display:inline-block;animation:flame 1.4s ease-in-out infinite}
+.streak b{display:block;font-size:26px}
+.streak small{color:var(--mut)}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:14px 0}
+.day{text-align:center;font-size:11px;color:var(--mut)}
+.day div{height:34px;border-radius:9px;background:rgba(255,255,255,.07);margin-bottom:4px;display:grid;place-items:center;font-size:15px}
+.day.f div{background:linear-gradient(135deg,#f97316,#ef4444);box-shadow:0 4px 14px rgba(239,68,68,.35)}
+.day.t div{outline:2px solid var(--a2)}
+.pg{height:10px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;margin:10px 0 4px}
+.pg i{display:block;height:100%;width:0;background:linear-gradient(90deg,#34d399,#22d3ee);transition:width .5s;border-radius:99px}
+.tk{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;background:rgba(0,0,0,.28);border:1px solid var(--line);margin:8px 0;animation:rise .4s both;cursor:pointer;transition:.2s}
+.tk .cb{width:26px;height:26px;border-radius:8px;border:2px solid var(--mut);display:grid;place-items:center;flex:none;transition:.25s;font-size:16px;color:transparent}
+.tk.on{border-color:var(--ok);background:rgba(52,211,153,.08)}
+.tk.on .cb{background:var(--ok);border-color:var(--ok);color:#fff;transform:scale(1.1)}
+.tk.on .tx{text-decoration:line-through;color:var(--mut)}
+.tk .tx{flex:1}
+.tk .rm{background:none;border:0;color:var(--mut);font-size:18px;cursor:pointer;padding:4px}
+.addrow{display:flex;gap:8px;margin-top:12px}
+.addrow input{flex:1}
+.addrow button{width:64px;border:0;border-radius:12px;background:var(--a1);color:#fff;font-size:24px;cursor:pointer}
+.hint{font-size:12px;color:var(--mut);text-align:center;margin-top:8px}
+.cf{position:fixed;top:-14px;width:10px;height:14px;z-index:99;pointer-events:none;animation:fall linear forwards}
+.foot{text-align:center;color:var(--mut);font-size:12px;margin-top:24px;line-height:1.8}
+.foot .cr{display:inline-block;font-size:14px;font-weight:700;color:var(--txt)}
+.foot .cr b{background:linear-gradient(90deg,var(--a1),var(--a2),#a855f7);-webkit-background-clip:text;background-clip:text;color:transparent}
+@media(max-width:380px){.sr{grid-template-columns:30px 1fr 96px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{
+  body{background:#fff!important}
+  .blobs{display:none}
+  body *{visibility:hidden}
+  .printing,.printing *{visibility:visible;animation:none!important;opacity:1!important}
+  .printing{position:absolute;left:0;top:0;width:100%;color:#000!important}
+  .printing *{color:#000!important;background:transparent!important;border-color:#bbb!important}
+  .printing .card,.printing .qcard{border:1px solid #999!important}
+  .printing .a,.printing .why{display:block!important}
+  .printing .a{color:#0b4a8f!important}
+  .printing .tap{display:none!important}
+  .printing .opt.ans{font-weight:700}
+  .printing .opt.ans::after{content:"  ✓ (sahi)"}
+  .printing::after{content:"Created by Ravi";display:block;margin-top:24px;text-align:center;font-size:12px;color:#555}
+  .noprint{display:none!important}
+}
+</style>
+</head>
+<body>
+<div class="blobs"><i></i><i></i><i></i></div>
+<div class="wrap">
+  <div class="hero">
+    <span class="badge">✨ AI Powered • Free</span>
+    <h1>Padhai ko banao <span>smart</span></h1>
+    <p class="sub">Roadmap, flashcards, quiz, doubt solver aur bahut kuch, ek jagah.</p>
+  </div>
+
+  <div class="tabs">
+    <button id="t_rm" class="on" onclick="tab('rm')">🗓️ Roadmap</button>
+    <button id="t_fc" onclick="tab('fc')">🃏 Flashcards</button>
+    <button id="t_qz" onclick="tab('qz')">📝 Quiz</button>
+    <button id="t_db" onclick="tab('db')">🧠 Doubt</button>
+    <button id="t_sm" onclick="tab('sm')">📄 Notes</button>
+    <button id="t_tk" onclick="tab('tk')">🔥 Tracker</button>
+    <button id="t_cp" onclick="tab('cp')">🗜️ Compress</button>
+  </div>
+
+  <!-- ROADMAP -->
+  <div id="p_rm" class="panel">
+    <label class="l">Tumhara naam</label>
+    <input id="name" placeholder="Jaise: Ravi">
+    <div class="g2">
+      <div><label class="l">Exam me kitne din bache?</label><input id="days" type="number" inputmode="numeric" placeholder="jaise 60"></div>
+      <div><label class="l">Roz kitne ghante?</label><input id="hours" type="number" step="0.5" inputmode="decimal" placeholder="jaise 4"></div>
+    </div>
+    <label class="l">Kitne subjects hain?</label>
+    <select id="n"></select>
+    <label class="l">Har subject chuno aur chapters select karo</label>
+    <div id="subs"></div>
+    <button class="btn" id="b_rm">🚀 Roadmap banao</button>
+    <div id="r_rm" class="result"></div>
+    <div class="dl noprint hide" id="dl_rm"><button class="btn sec" onclick="pdf('r_rm')">⬇️ PDF download karo</button><div class="hint">Print screen me <b>"Save as PDF"</b> chuno, phir download dabao.</div></div>
+  </div>
+
+  <!-- FLASHCARDS -->
+  <div id="p_fc" class="panel hide">
+    <div class="pk" data-k="fc"></div>
+    <div class="g2">
+      <div><label class="l">Kitne flashcards?</label>
+        <select id="cnt">
+          <option value="15">15 cards</option><option value="25" selected>25 cards</option><option value="40">40 cards</option>
+          <option value="50">50 cards</option><option value="60">60 cards</option><option value="70">70 cards</option><option value="80">80 cards</option>
+        </select></div>
+      <div><label class="l">Bhasha</label>
+        <select id="lang_fc"><option>Hinglish</option><option>Hindi</option><option>English</option></select></div>
+    </div>
+    <button class="btn" id="b_fc">⚡ Flashcards banao</button>
+    <div id="r_fc" class="result"></div>
+    <button class="btn sec noprint hide" id="tg" onclick="toggleAll()">👁️ Sab jawab dikhao / chhupao</button>
+    <div class="dl noprint hide" id="dl_fc"><button class="btn sec" onclick="pdf('r_fc')">⬇️ PDF download karo</button><div class="hint">Print screen me <b>"Save as PDF"</b> chuno, phir download dabao.</div></div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="p_qz" class="panel hide">
+    <div class="pk" data-k="qz"></div>
+    <div class="g2">
+      <div><label class="l">Kitne sawal?</label>
+        <select id="qn"><option value="10" selected>10 sawal</option><option value="15">15 sawal</option><option value="20">20 sawal</option><option value="30">30 sawal</option></select></div>
+      <div><label class="l">Difficulty</label>
+        <select id="qlv"><option>Aasan</option><option selected>Medium</option><option>Kathin</option></select></div>
+    </div>
+    <label class="l">Bhasha</label>
+    <select id="lang_qz"><option>Hinglish</option><option>Hindi</option><option>English</option></select>
+    <button class="btn" id="b_qz">📝 Quiz banao</button>
+    <div id="r_qz" class="result"></div>
+    <div class="dl noprint hide" id="dl_qz"><button class="btn sec" onclick="pdf('r_qz')">⬇️ PDF download karo</button><div class="hint">Print screen me <b>"Save as PDF"</b> chuno, phir download dabao.</div></div>
+  </div>
+
+  <!-- DOUBT -->
+  <div id="p_db" class="panel hide">
+    <label class="drop">
+      <input id="img_db" type="file" accept="image/*" multiple class="hide">
+      <div class="ic">📷</div>
+      <b>Question ki photo lo ya chuno</b>
+      <small>Max 3 photos • saaf aur seedhi photo lo</small>
+    </label>
+    <div id="info_db"></div>
+    <label class="l">Ya question yaha likho (optional)</label>
+    <textarea id="t_db" rows="3" placeholder="Jaise: x² + 5x + 6 = 0 ko solve karo"></textarea>
+    <label class="l">Bhasha</label>
+    <select id="lang_db"><option>Hinglish</option><option>Hindi</option><option>English</option></select>
+    <button class="btn" id="b_db">🧠 Doubt solve karo</button>
+    <div id="r_db" class="result"></div>
+    <div class="dl noprint hide" id="dl_db"><button class="btn sec" onclick="pdf('r_db')">⬇️ PDF download karo</button><div class="hint">Print screen me <b>"Save as PDF"</b> chuno, phir download dabao.</div></div>
+  </div>
+
+  <!-- NOTES -->
+  <div id="p_sm" class="panel hide">
+    <div class="pk" data-k="sm"></div>
+    <label class="l">Kaisa chahiye?</label>
+    <select id="smode">
+      <option value="revision">⚡ 5-minute revision notes</option>
+      <option value="short">📌 Short summary + key points</option>
+      <option value="simple">💬 Simple bhasha me samjhao</option>
+    </select>
+    <label class="l">Bhasha</label>
+    <select id="lang_sm"><option>Hinglish</option><option>Hindi</option><option>English</option></select>
+    <button class="btn" id="b_sm">📄 Notes banao</button>
+    <div id="r_sm" class="result"></div>
+    <div class="dl noprint hide" id="dl_sm"><button class="btn sec" onclick="pdf('r_sm')">⬇️ PDF download karo</button><div class="hint">Print screen me <b>"Save as PDF"</b> chuno, phir download dabao.</div></div>
+  </div>
+
+  <!-- TRACKER -->
+  <div id="p_tk" class="panel hide">
+    <div class="streak">
+      <div class="fire">🔥</div>
+      <b><span id="tkstreak">0</span> din ki streak</b>
+      <small>Roz saare targets complete karo, streak badhti jayegi</small>
+    </div>
+    <div class="week" id="tkweek"></div>
+    <label class="l">Aaj ke targets</label>
+    <div class="pg"><i id="tkpg"></i></div>
+    <small id="tkcnt" style="color:var(--mut)"></small>
+    <div id="tklist"></div>
+    <div class="addrow"><input id="tkin" maxlength="50" placeholder="Jaise: Maths 1 ghanta"><button id="tkadd">＋</button></div>
+    <div class="hint">Ye data sirf isi phone/browser me save rehta hai.</div>
+  </div>
+
+  <!-- COMPRESS -->
+  <div id="p_cp" class="panel hide">
+    <label class="drop
